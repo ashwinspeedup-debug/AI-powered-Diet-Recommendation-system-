@@ -1,5 +1,6 @@
 import streamlit as st
 from openai import OpenAI
+import os
 
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
@@ -130,20 +131,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  AVAILABLE MODELS
+#  BACKEND API KEY
+#  In Streamlit Cloud → Settings → Secrets, add:
+#      OPENROUTER_API_KEY = "sk-or-v1-xxxx"
+#  Or set as an environment variable locally.
 # ─────────────────────────────────────────────
-MODELS = {
-    "🟢 Google Gemini Flash 1.5 (Free)":       "google/gemini-flash-1.5",
-    "🟢 Meta LLaMA 3.1 8B (Free)":             "meta-llama/llama-3.1-8b-instruct:free",
-    "🟢 Mistral 7B (Free)":                    "mistralai/mistral-7b-instruct:free",
-    "⭐ Claude Sonnet 4.5":                    "anthropic/claude-sonnet-4-5",
-    "⭐ GPT-4o":                               "openai/gpt-4o",
-    "⭐ GPT-4o Mini":                          "openai/gpt-4o-mini",
-    "⭐ Google Gemini Pro 1.5":               "google/gemini-pro-1.5",
-    "⭐ Meta LLaMA 3.3 70B":                  "meta-llama/llama-3.3-70b-instruct",
-    "⭐ DeepSeek Chat V3":                    "deepseek/deepseek-chat",
-    "⭐ Mistral Large":                        "mistralai/mistral-large",
-}
+OPENROUTER_API_KEY = st.secrets.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY", "")
 
 # ─────────────────────────────────────────────
 #  SESSION STATE
@@ -154,10 +147,6 @@ if "chat_display" not in st.session_state:
     st.session_state.chat_display = []
 if "started" not in st.session_state:
     st.session_state.started = False
-if "api_key" not in st.session_state:
-    st.session_state.api_key = ""
-if "current_model" not in st.session_state:
-    st.session_state.current_model = list(MODELS.keys())[0]
 
 # ─────────────────────────────────────────────
 #  SYSTEM PROMPT
@@ -204,46 +193,21 @@ STYLE RULES:
 - Never give medical advice; recommend consulting a doctor for serious conditions
 - Always add a disclaimer that this is general guidance and to consult a registered dietitian for personalised medical nutrition therapy"""
 
+# Default model — GPT-4o
+DEFAULT_MODEL = "openai/gpt-4o"
+
 # ─────────────────────────────────────────────
 #  SIDEBAR
 # ─────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### 🔑 OpenRouter API Key")
-    api_key_input = st.text_input(
-        "Enter your OpenRouter API key",
-        type="password",
-        placeholder="sk-or-v1-...",
-        value=st.session_state.api_key,
-        help="Get your free key at openrouter.ai/keys"
+    st.markdown("**🍛 About AaharBot**")
+    st.markdown(
+        "AaharBot is your personal Indian diet advisor. "
+        "It asks you a few simple questions about your health, lifestyle, and food preferences, "
+        "then creates a fully personalised Indian meal plan — covering breakfast to dinner — "
+        "tailored to your goals, whether it's weight loss, muscle gain, diabetes management, "
+        "heart health, or general wellness."
     )
-    if api_key_input:
-        st.session_state.api_key = api_key_input
-
-    st.markdown("---")
-    st.markdown("### 🤖 Choose Model")
-    selected_label = st.selectbox(
-        "Model",
-        list(MODELS.keys()),
-        index=list(MODELS.keys()).index(st.session_state.current_model),
-        label_visibility="collapsed"
-    )
-
-    # Reset chat if model changed
-    if selected_label != st.session_state.current_model:
-        st.session_state.current_model = selected_label
-        st.session_state.messages = []
-        st.session_state.chat_display = []
-        st.session_state.started = False
-
-    model_id = MODELS[selected_label]
-    st.markdown(f"**Model ID:** `{model_id}`")
-
-    st.markdown("---")
-    st.markdown("**🟢 Free** = no credits needed  \n**⭐ Paid** = requires OpenRouter credits")
-    st.markdown("---")
-    st.markdown("**About AaharBot:**")
-    st.markdown("Uses OpenRouter to access 100+ AI models via a single API key.")
-
     st.markdown("---")
     if st.button("🔄 Reset Chat"):
         st.session_state.messages = []
@@ -256,7 +220,7 @@ with st.sidebar:
 # ─────────────────────────────────────────────
 def call_openrouter(messages: list, model: str) -> str:
     client = OpenAI(
-        api_key=st.session_state.api_key,
+        api_key=OPENROUTER_API_KEY,
         base_url="https://openrouter.ai/api/v1",
         default_headers={
             "HTTP-Referer": "https://aaharbot.streamlit.app",
@@ -292,90 +256,81 @@ def render_chat():
 # ─────────────────────────────────────────────
 #  MAIN APP
 # ─────────────────────────────────────────────
-if not st.session_state.api_key:
-    st.markdown("""
-    <div class="api-key-box">
-      <b>👈 Enter your OpenRouter API key in the sidebar to get started.</b><br><br>
-      🆓 <b>It's free!</b> Sign up at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a><br>
-      OpenRouter gives you access to <b>100+ AI models</b> — including free ones like Gemini Flash, LLaMA 3, and Mistral — all with a single API key.
-    </div>
-    """, unsafe_allow_html=True)
+if not OPENROUTER_API_KEY:
+    st.error("⚠️ OpenRouter API key not configured. Please add `OPENROUTER_API_KEY` to your Streamlit secrets or environment variables.")
+    st.stop()
 
-else:
-    # Auto-start greeting
-    if not st.session_state.started:
-        st.session_state.started = True
-        with st.spinner("AaharBot is waking up..."):
-            try:
-                init_messages = [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": "Hi, I want diet advice."},
-                ]
-                greeting = call_openrouter(init_messages, MODELS[selected_label])
-                st.session_state.messages = init_messages + [
-                    {"role": "assistant", "content": greeting}
-                ]
-                st.session_state.chat_display = [("assistant", greeting)]
-            except Exception as e:
-                st.error(f"❌ Could not connect to OpenRouter: {e}")
-                st.session_state.started = False
+# Auto-start greeting
+if not st.session_state.started:
+    st.session_state.started = True
+    with st.spinner("AaharBot is waking up..."):
+        try:
+            init_messages = [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": "Hi, I want diet advice."},
+            ]
+            greeting = call_openrouter(init_messages, DEFAULT_MODEL)
+            st.session_state.messages = init_messages + [
+                {"role": "assistant", "content": greeting}
+            ]
+            st.session_state.chat_display = [("assistant", greeting)]
+        except Exception as e:
+            st.error(f"❌ Could not connect to OpenRouter: {e}")
+            st.session_state.started = False
 
-    # Render chat history
-    render_chat()
+# Render chat history
+render_chat()
 
-    # Chat input
-    user_input = st.chat_input("Type your message here…")
+# Chat input
+user_input = st.chat_input("Type your message here…")
 
-    if user_input and user_input.strip():
-        # Add to display & history
-        st.session_state.chat_display.append(("user", user_input.strip()))
-        st.session_state.messages.append({"role": "user", "content": user_input.strip()})
+if user_input and user_input.strip():
+    st.session_state.chat_display.append(("user", user_input.strip()))
+    st.session_state.messages.append({"role": "user", "content": user_input.strip()})
 
-        # Show user bubble
-        st.markdown(
-            f'<div class="chat-label-user">You 👤</div>'
-            f'<div class="chat-user">{user_input.strip()}</div>',
+    st.markdown(
+        f'<div class="chat-label-user">You 👤</div>'
+        f'<div class="chat-user">{user_input.strip()}</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div class="chat-label-bot">🍛 AaharBot</div>', unsafe_allow_html=True)
+    response_placeholder = st.empty()
+
+    try:
+        response_placeholder.markdown(
+            '<div class="typing-indicator">✨ Thinking...</div>',
             unsafe_allow_html=True
         )
 
-        # Call OpenRouter
-        st.markdown('<div class="chat-label-bot">🍛 AaharBot</div>', unsafe_allow_html=True)
-        response_placeholder = st.empty()
+        reply = call_openrouter(st.session_state.messages, DEFAULT_MODEL)
 
-        try:
-            response_placeholder.markdown(
-                '<div class="typing-indicator">✨ Thinking...</div>',
-                unsafe_allow_html=True
-            )
+        response_placeholder.markdown(
+            f'<div class="chat-bot">{reply}</div>',
+            unsafe_allow_html=True
+        )
 
-            reply = call_openrouter(st.session_state.messages, MODELS[selected_label])
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.session_state.chat_display.append(("assistant", reply))
+        st.rerun()
 
-            response_placeholder.markdown(
-                f'<div class="chat-bot">{reply}</div>',
-                unsafe_allow_html=True
-            )
-
-            st.session_state.messages.append({"role": "assistant", "content": reply})
-            st.session_state.chat_display.append(("assistant", reply))
-            st.rerun()
-
-        except Exception as e:
-            err = str(e).lower()
-            if "401" in err or "authentication" in err or "api key" in err:
-                st.error("❌ Invalid API key. Please check your OpenRouter key in the sidebar.")
-            elif "429" in err or "rate limit" in err:
-                st.error("⏳ Rate limit reached. Please wait a moment and try again.")
-            elif "402" in err or "quota" in err or "credits" in err:
-                st.error("💳 Insufficient OpenRouter credits. Add credits at openrouter.ai/credits or switch to a free model.")
-            elif "model" in err:
-                st.error(f"🤖 Model error: {str(e)}. Try switching to a different model in the sidebar.")
-            else:
-                st.error(f"❌ Error: {str(e)}")
+    except Exception as e:
+        err = str(e).lower()
+        if "401" in err or "authentication" in err or "api key" in err:
+            st.error("❌ Invalid API key. Please check your backend configuration.")
+        elif "429" in err or "rate limit" in err:
+            st.error("⏳ Rate limit reached. Please wait a moment and try again.")
+        elif "402" in err or "quota" in err or "credits" in err:
+            st.error("💳 Insufficient OpenRouter credits. Add credits at openrouter.ai/credits or switch to a free model.")
+        elif "model" in err:
+            st.error(f"🤖 Model error: {str(e)}. Try switching to a different model in the sidebar.")
+        else:
+            st.error(f"❌ Error: {str(e)}")
 
 # ─────────────────────────────────────────────
 #  FOOTER
 # ─────────────────────────────────────────────
 st.markdown(
-    '<div class="footer">AaharBot • Personalised Indian Nutrition • Powered by OpenRouter 🌐</div>',
+    '<div class="footer">AaharBot • Personalised Indian Nutrition</div>',
     unsafe_allow_html=True
 )
