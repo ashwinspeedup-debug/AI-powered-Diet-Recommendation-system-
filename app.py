@@ -126,7 +126,7 @@ div[data-testid="stTextInput"] input:focus { border-color: #059669 !important; }
 st.markdown("""
 <div class="hero-header">
   <h1>🍛 AaharBot</h1>
-  <p>AI-Powered Personalised Indian Diet Advisor — Powered by OpenRouter</p>
+  <p>AI-Powered Personalised Indian Diet Advisor </p>
 </div>
 """, unsafe_allow_html=True)
 
