@@ -20,16 +20,16 @@ st.markdown("""
 html, body, [class*="css"] { font-family: 'Nunito', sans-serif; }
 
 .stApp {
-    background: linear-gradient(135deg, #eaf4fb 0%, #f0f8ff 50%, #e8f4f8 100%);
+    background: linear-gradient(135deg, #f0fdf4 0%, #f7fffe 50%, #ecfdf5 100%);
 }
 
 .hero-header {
-    background: linear-gradient(135deg, #0d6efd 0%, #0891b2 50%, #06b6d4 100%);
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
     border-radius: 20px;
     padding: 28px 32px 20px;
     text-align: center;
     margin-bottom: 24px;
-    box-shadow: 0 8px 32px rgba(13,110,253,0.18);
+    box-shadow: 0 8px 32px rgba(5,150,105,0.2);
 }
 .hero-header h1 {
     font-family: 'Tiro Devanagari Hindi', serif;
@@ -37,16 +37,16 @@ html, body, [class*="css"] { font-family: 'Nunito', sans-serif; }
     font-size: 2.4rem;
     margin: 0 0 4px 0;
 }
-.hero-header p { color: rgba(255,255,255,0.88); margin: 0; font-size: 1rem; }
+.hero-header p { color: rgba(255,255,255,0.9); margin: 0; font-size: 1rem; }
 
 .chat-user {
-    background: linear-gradient(135deg, #0d6efd, #0891b2);
+    background: linear-gradient(135deg, #059669, #10b981);
     color: #fff;
     border-radius: 18px 18px 4px 18px;
     padding: 12px 16px;
     margin: 8px 0 8px 18%;
     font-size: 0.96rem;
-    box-shadow: 0 3px 12px rgba(13,110,253,0.18);
+    box-shadow: 0 3px 12px rgba(5,150,105,0.2);
     line-height: 1.55;
 }
 .chat-bot {
@@ -57,14 +57,14 @@ html, body, [class*="css"] { font-family: 'Nunito', sans-serif; }
     margin: 8px 18% 8px 0;
     font-size: 0.96rem;
     box-shadow: 0 3px 16px rgba(0,0,0,0.08);
-    border-left: 4px solid #06b6d4;
+    border-left: 4px solid #10b981;
     line-height: 1.65;
 }
-.chat-label-user { text-align:right; font-size:0.72rem; color:#0d6efd; margin-bottom:2px; font-weight:700; }
-.chat-label-bot  { text-align:left;  font-size:0.72rem; color:#0891b2; margin-bottom:2px; font-weight:700; }
+.chat-label-user { text-align:right; font-size:0.72rem; color:#059669; margin-bottom:2px; font-weight:700; }
+.chat-label-bot  { text-align:left;  font-size:0.72rem; color:#10b981; margin-bottom:2px; font-weight:700; }
 
 .stButton > button {
-    background: linear-gradient(135deg, #0d6efd, #0891b2) !important;
+    background: linear-gradient(135deg, #059669, #10b981) !important;
     color: #fff !important;
     border: none !important;
     border-radius: 50px !important;
@@ -72,36 +72,50 @@ html, body, [class*="css"] { font-family: 'Nunito', sans-serif; }
     font-family: 'Nunito', sans-serif !important;
     font-weight: 700 !important;
     font-size: 0.95rem !important;
-    box-shadow: 0 4px 14px rgba(13,110,253,0.25) !important;
+    box-shadow: 0 4px 14px rgba(5,150,105,0.25) !important;
 }
 .stButton > button:hover { transform: translateY(-2px) !important; }
 
 div[data-testid="stTextInput"] input {
     border-radius: 50px !important;
-    border: 2px solid #bfdbfe !important;
+    border: 2px solid #a7f3d0 !important;
     padding: 10px 18px !important;
 }
-div[data-testid="stTextInput"] input:focus { border-color: #0d6efd !important; }
+div[data-testid="stTextInput"] input:focus { border-color: #059669 !important; }
 
-.footer { text-align:center; color:#bbb; font-size:0.78rem; margin-top:30px; }
 .api-key-box {
     background: #fff;
     border-radius: 14px;
-    padding: 18px 20px;
-    border: 2px dashed #bfdbfe;
+    padding: 20px 22px;
+    border: 2px dashed #a7f3d0;
     margin-bottom: 18px;
+    line-height: 1.7;
 }
+
+.model-badge {
+    display: inline-block;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 2px 2px;
+}
+
 .typing-indicator {
     background: #fff;
     border-radius: 18px 18px 18px 4px;
     padding: 12px 18px;
     margin: 8px 18% 8px 0;
     box-shadow: 0 3px 16px rgba(0,0,0,0.08);
-    border-left: 4px solid #06b6d4;
+    border-left: 4px solid #10b981;
     color: #aaa;
     font-style: italic;
     font-size: 0.9rem;
 }
+
+.footer { text-align:center; color:#bbb; font-size:0.78rem; margin-top:30px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -111,21 +125,39 @@ div[data-testid="stTextInput"] input:focus { border-color: #0d6efd !important; }
 st.markdown("""
 <div class="hero-header">
   <h1>🍛 AaharBot</h1>
-  <p>AI-Powered Personalised Indian Diet Advisor — Powered by OpenAI GPT-4o</p>
+  <p>AI-Powered Personalised Indian Diet Advisor — Powered by OpenRouter</p>
 </div>
 """, unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+#  AVAILABLE MODELS
+# ─────────────────────────────────────────────
+MODELS = {
+    "🟢 Google Gemini Flash 1.5 (Free)":       "google/gemini-flash-1.5",
+    "🟢 Meta LLaMA 3.1 8B (Free)":             "meta-llama/llama-3.1-8b-instruct:free",
+    "🟢 Mistral 7B (Free)":                    "mistralai/mistral-7b-instruct:free",
+    "⭐ Claude Sonnet 4.5":                    "anthropic/claude-sonnet-4-5",
+    "⭐ GPT-4o":                               "openai/gpt-4o",
+    "⭐ GPT-4o Mini":                          "openai/gpt-4o-mini",
+    "⭐ Google Gemini Pro 1.5":               "google/gemini-pro-1.5",
+    "⭐ Meta LLaMA 3.3 70B":                  "meta-llama/llama-3.3-70b-instruct",
+    "⭐ DeepSeek Chat V3":                    "deepseek/deepseek-chat",
+    "⭐ Mistral Large":                        "mistralai/mistral-large",
+}
 
 # ─────────────────────────────────────────────
 #  SESSION STATE
 # ─────────────────────────────────────────────
 if "messages" not in st.session_state:
-    st.session_state.messages = []       # OpenAI message history (includes system)
+    st.session_state.messages = []
 if "chat_display" not in st.session_state:
-    st.session_state.chat_display = []   # (role, text) for UI bubbles
+    st.session_state.chat_display = []
 if "started" not in st.session_state:
     st.session_state.started = False
 if "api_key" not in st.session_state:
     st.session_state.api_key = ""
+if "current_model" not in st.session_state:
+    st.session_state.current_model = list(MODELS.keys())[0]
 
 # ─────────────────────────────────────────────
 #  SYSTEM PROMPT
@@ -176,27 +208,42 @@ STYLE RULES:
 #  SIDEBAR
 # ─────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### 🔑 OpenAI API Key")
+    st.markdown("### 🔑 OpenRouter API Key")
     api_key_input = st.text_input(
-        "Enter your OpenAI API key",
+        "Enter your OpenRouter API key",
         type="password",
-        placeholder="sk-...",
+        placeholder="sk-or-v1-...",
         value=st.session_state.api_key,
-        help="Get your key at platform.openai.com/api-keys"
+        help="Get your free key at openrouter.ai/keys"
     )
     if api_key_input:
         st.session_state.api_key = api_key_input
 
     st.markdown("---")
-    model_choice = st.selectbox(
+    st.markdown("### 🤖 Choose Model")
+    selected_label = st.selectbox(
         "Model",
-        ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
-        index=0,
-        help="gpt-4o is recommended for best results"
+        list(MODELS.keys()),
+        index=list(MODELS.keys()).index(st.session_state.current_model),
+        label_visibility="collapsed"
     )
+
+    # Reset chat if model changed
+    if selected_label != st.session_state.current_model:
+        st.session_state.current_model = selected_label
+        st.session_state.messages = []
+        st.session_state.chat_display = []
+        st.session_state.started = False
+
+    model_id = MODELS[selected_label]
+    st.markdown(f"**Model ID:** `{model_id}`")
+
+    st.markdown("---")
+    st.markdown("**🟢 Free** = no credits needed  \n**⭐ Paid** = requires OpenRouter credits")
     st.markdown("---")
     st.markdown("**About AaharBot:**")
-    st.markdown("Powered by OpenAI — asks you questions and generates a fully personalised Indian diet plan.")
+    st.markdown("Uses OpenRouter to access 100+ AI models via a single API key.")
+
     st.markdown("---")
     if st.button("🔄 Reset Chat"):
         st.session_state.messages = []
@@ -205,10 +252,17 @@ with st.sidebar:
         st.rerun()
 
 # ─────────────────────────────────────────────
-#  HELPER: call OpenAI API
+#  HELPER: call OpenRouter (OpenAI-compatible)
 # ─────────────────────────────────────────────
-def call_openai(messages: list, model: str) -> str:
-    client = OpenAI(api_key=st.session_state.api_key)
+def call_openrouter(messages: list, model: str) -> str:
+    client = OpenAI(
+        api_key=st.session_state.api_key,
+        base_url="https://openrouter.ai/api/v1",
+        default_headers={
+            "HTTP-Referer": "https://aaharbot.streamlit.app",
+            "X-Title": "AaharBot Indian Diet Advisor",
+        }
+    )
     response = client.chat.completions.create(
         model=model,
         messages=messages,
@@ -241,13 +295,14 @@ def render_chat():
 if not st.session_state.api_key:
     st.markdown("""
     <div class="api-key-box">
-      <b>👈 Enter your OpenAI API key in the sidebar to get started.</b><br><br>
-      Get a free API key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
+      <b>👈 Enter your OpenRouter API key in the sidebar to get started.</b><br><br>
+      🆓 <b>It's free!</b> Sign up at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a><br>
+      OpenRouter gives you access to <b>100+ AI models</b> — including free ones like Gemini Flash, LLaMA 3, and Mistral — all with a single API key.
     </div>
     """, unsafe_allow_html=True)
 
 else:
-    # Auto-start: send greeting from bot on first load
+    # Auto-start greeting
     if not st.session_state.started:
         st.session_state.started = True
         with st.spinner("AaharBot is waking up..."):
@@ -256,34 +311,34 @@ else:
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": "Hi, I want diet advice."},
                 ]
-                greeting = call_openai(init_messages, model_choice)
+                greeting = call_openrouter(init_messages, MODELS[selected_label])
                 st.session_state.messages = init_messages + [
                     {"role": "assistant", "content": greeting}
                 ]
                 st.session_state.chat_display = [("assistant", greeting)]
             except Exception as e:
-                st.error(f"❌ Could not connect to OpenAI API: {e}")
+                st.error(f"❌ Could not connect to OpenRouter: {e}")
                 st.session_state.started = False
 
-    # Render existing chat
+    # Render chat history
     render_chat()
 
     # Chat input
     user_input = st.chat_input("Type your message here…")
 
     if user_input and user_input.strip():
-        # Add user message to display
+        # Add to display & history
         st.session_state.chat_display.append(("user", user_input.strip()))
         st.session_state.messages.append({"role": "user", "content": user_input.strip()})
 
-        # Show user bubble immediately
+        # Show user bubble
         st.markdown(
             f'<div class="chat-label-user">You 👤</div>'
             f'<div class="chat-user">{user_input.strip()}</div>',
             unsafe_allow_html=True
         )
 
-        # Call OpenAI and show response
+        # Call OpenRouter
         st.markdown('<div class="chat-label-bot">🍛 AaharBot</div>', unsafe_allow_html=True)
         response_placeholder = st.empty()
 
@@ -293,33 +348,34 @@ else:
                 unsafe_allow_html=True
             )
 
-            reply = call_openai(st.session_state.messages, model_choice)
+            reply = call_openrouter(st.session_state.messages, MODELS[selected_label])
 
             response_placeholder.markdown(
                 f'<div class="chat-bot">{reply}</div>',
                 unsafe_allow_html=True
             )
 
-            # Save assistant response
             st.session_state.messages.append({"role": "assistant", "content": reply})
             st.session_state.chat_display.append(("assistant", reply))
             st.rerun()
 
         except Exception as e:
-            err = str(e)
-            if "authentication" in err.lower() or "api key" in err.lower() or "incorrect api key" in err.lower():
-                st.error("❌ Invalid API key. Please check your key in the sidebar.")
-            elif "rate limit" in err.lower():
+            err = str(e).lower()
+            if "401" in err or "authentication" in err or "api key" in err:
+                st.error("❌ Invalid API key. Please check your OpenRouter key in the sidebar.")
+            elif "429" in err or "rate limit" in err:
                 st.error("⏳ Rate limit reached. Please wait a moment and try again.")
-            elif "quota" in err.lower():
-                st.error("💳 You've exceeded your OpenAI quota. Please check your billing at platform.openai.com.")
+            elif "402" in err or "quota" in err or "credits" in err:
+                st.error("💳 Insufficient OpenRouter credits. Add credits at openrouter.ai/credits or switch to a free model.")
+            elif "model" in err:
+                st.error(f"🤖 Model error: {str(e)}. Try switching to a different model in the sidebar.")
             else:
-                st.error(f"❌ Error: {err}")
+                st.error(f"❌ Error: {str(e)}")
 
 # ─────────────────────────────────────────────
 #  FOOTER
 # ─────────────────────────────────────────────
 st.markdown(
-    '<div class="footer">AaharBot • Personalised Indian Nutrition • Powered by OpenAI GPT-4o</div>',
+    '<div class="footer">AaharBot • Personalised Indian Nutrition • Powered by OpenRouter 🌐</div>',
     unsafe_allow_html=True
 )
